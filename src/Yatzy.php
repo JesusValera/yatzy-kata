@@ -9,14 +9,9 @@ class Yatzy
     /** @var list<int> */
     private array $dice;
 
-    public function __construct(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5)
+    public function __construct(int ...$dice)
     {
-        $this->dice = array_fill(0, 6, 0);
-        $this->dice[0] = $dice1;
-        $this->dice[1] = $dice2;
-        $this->dice[2] = $dice3;
-        $this->dice[3] = $dice4;
-        $this->dice[4] = $dice5;
+        $this->dice = [...$dice];
     }
 
     public static function chance(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
