@@ -24,14 +24,9 @@ class Yatzy
      */
     public static function yatzyScore(array $diceScore): int
     {
-        $counts = array_fill(0, count($diceScore) + 1, 0);
-        foreach ($diceScore as $dice) {
-            $counts[$dice - 1] += 1;
-        }
-        foreach (range(0, count($counts) - 1) as $i) {
-            if ($counts[$i] == 5) {
-                return 50;
-            }
+        $unique = array_unique($diceScore, SORT_NUMERIC);
+        if (1 === count($unique)) {
+            return 50;
         }
 
         return 0;
