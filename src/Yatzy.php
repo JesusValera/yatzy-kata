@@ -14,16 +14,9 @@ class Yatzy
         $this->dice = [...$dice];
     }
 
-    public static function chance(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public static function chance(int ...$dice): int
     {
-        $total = 0;
-        $total += $dice1;
-        $total += $dice2;
-        $total += $dice3;
-        $total += $dice4;
-        $total += $dice5;
-
-        return $total;
+        return array_sum($dice);
     }
 
     /**
