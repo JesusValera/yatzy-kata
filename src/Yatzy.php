@@ -4,27 +4,24 @@ declare(strict_types=1);
 
 namespace Yatzy;
 
-class Yatzy
+final class Yatzy
 {
     /** @var list<int> */
-    private array $dice;
+    private array $dices;
 
-    public function __construct(int ...$dice)
+    public function __construct(int ...$dices)
     {
-        $this->dice = [...$dice];
+        $this->dices = [...$dices];
     }
 
-    public static function chance(int ...$dice): int
+    public function chance(): int
     {
-        return array_sum($dice);
+        return array_sum($this->dices);
     }
 
-    /**
-     * @param list<int> $diceScore
-     */
-    public static function yatzyScore(array $diceScore): int
+    public function yatzyScore(): int
     {
-        $unique = array_unique($diceScore, SORT_NUMERIC);
+        $unique = array_unique($this->dices, SORT_NUMERIC);
         if (1 === count($unique)) {
             return 50;
         }
@@ -32,109 +29,40 @@ class Yatzy
         return 0;
     }
 
-    public static function ones(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function ones(): int
     {
-        $sum = 0;
-        if ($dice1 == 1) {
-            $sum += 1;
-        }
-        if ($dice2 == 1) {
-            $sum += 1;
-        }
-        if ($dice3 == 1) {
-            $sum += 1;
-        }
-        if ($dice4 == 1) {
-            $sum += 1;
-        }
-        if ($dice5 == 1) {
-            $sum += 1;
-        }
-
-        return $sum;
+        return count(array_filter($this->dices, static fn(int $dice) => 1 === $dice));
     }
 
-    public static function twos(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function twos(): int
     {
-        $sum = 0;
-        if ($dice1 == 2) {
-            $sum += 2;
-        }
-        if ($dice2 == 2) {
-            $sum += 2;
-        }
-        if ($dice3 == 2) {
-            $sum += 2;
-        }
-        if ($dice4 == 2) {
-            $sum += 2;
-        }
-        if ($dice5 == 2) {
-            $sum += 2;
-        }
-
-        return $sum;
+        return $this->calculateSumOfDuplicatedNumber(2);
     }
 
-    public static function threes(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function threes(): int
     {
-        $s = 0;
-        if ($dice1 == 3) {
-            $s += 3;
-        }
-        if ($dice2 == 3) {
-            $s += 3;
-        }
-        if ($dice3 == 3) {
-            $s += 3;
-        }
-        if ($dice4 == 3) {
-            $s += 3;
-        }
-        if ($dice5 == 3) {
-            $s += 3;
-        }
-
-        return $s;
+        return $this->calculateSumOfDuplicatedNumber(3);
     }
 
     public function fours(): int
     {
-        $sum = 0;
-        for ($at = 0; $at != 5; $at++) {
-            if ($this->dice[$at] == 4) {
-                $sum += 4;
-            }
-        }
-        return $sum;
+
+        return $this->calculateSumOfDuplicatedNumber(4);
     }
 
-    public function Fives(): int
+    public function fives(): int
     {
-        $s = 0;
-        $i = 0;
-        for ($i = 0; $i < 5; $i++) {
-            if ($this->dice[$i] == 5) {
-                $s = $s + 5;
-            }
-        }
 
-        return $s;
+        return $this->calculateSumOfDuplicatedNumber(5);
     }
 
     public function sixes(): int
     {
-        $sum = 0;
-        for ($at = 0; $at < 5; $at++) {
-            if ($this->dice[$at] == 6) {
-                $sum = $sum + 6;
-            }
-        }
 
-        return $sum;
+        return $this->calculateSumOfDuplicatedNumber(6);
     }
 
-    public static function score_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function score_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $counts = array_fill(0, 6, 0);
         $counts[$dice1 - 1] += 1;
@@ -151,7 +79,7 @@ class Yatzy
         return 0;
     }
 
-    public static function two_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function two_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $counts = array_fill(0, 6, 0);
         $counts[$dice1 - 1] += 1;
@@ -175,7 +103,7 @@ class Yatzy
         return 0;
     }
 
-    public static function three_of_a_kind(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function three_of_a_kind(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $t = array_fill(0, 6, 0);
         $t[$dice1 - 1] += 1;
@@ -192,7 +120,7 @@ class Yatzy
         return 0;
     }
 
-    public static function smallStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function smallStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $tallies = array_fill(0, 6, 0);
         $tallies[$dice1 - 1] += 1;
@@ -211,7 +139,7 @@ class Yatzy
         return 0;
     }
 
-    public static function largeStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function largeStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $tallies = array_fill(0, 6, 0);
         $tallies[$dice1 - 1] += 1;
@@ -230,7 +158,7 @@ class Yatzy
         return 0;
     }
 
-    public static function fullHouse(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function fullHouse(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
     {
         $tallies = [];
         $_2 = false;
@@ -265,5 +193,14 @@ class Yatzy
         }
 
         return 0;
+    }
+
+    private function calculateSumOfDuplicatedNumber(int $value): int
+    {
+        return array_reduce(
+            array_filter($this->dices, static fn(int $dice) => $value === $dice),
+            static fn(int $carry, int $number) => $carry + $number,
+            0
+        );
     }
 }
