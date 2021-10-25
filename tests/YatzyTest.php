@@ -79,9 +79,9 @@ final class YatzyTest extends TestCase
 
     public function test_three_of_a_kind(): void
     {
-        self::assertSame(9, (new Yatzy())->three_of_a_kind(3, 3, 3, 4, 5));
-        self::assertSame(15, (new Yatzy())->three_of_a_kind(5, 3, 5, 4, 5));
-        self::assertSame(9, (new Yatzy())->three_of_a_kind(3, 3, 3, 2, 1));
+        self::assertSame(9, (new Yatzy(3, 3, 3, 4, 5))->threeOfAKind());
+        self::assertSame(15, (new Yatzy(5, 3, 5, 4, 5))->threeOfAKind());
+        self::assertSame(9, (new Yatzy(3, 3, 3, 2, 1))->threeOfAKind());
     }
 
     public function test_smallStraight(): void

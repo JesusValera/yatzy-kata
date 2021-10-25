@@ -93,21 +93,20 @@ final class Yatzy
         return $keys[0] * 2 + $keys[1] * 2;
     }
 
-    public function three_of_a_kind(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function threeOfAKind(): int
     {
-        $t = array_fill(0, 6, 0);
-        $t[$dice1 - 1] += 1;
-        $t[$dice2 - 1] += 1;
-        $t[$dice3 - 1] += 1;
-        $t[$dice4 - 1] += 1;
-        $t[$dice5 - 1] += 1;
-        for ($i = 0; $i != 6; $i++) {
-            if ($t[$i] >= 3) {
-                return ($i + 1) * 3;
-            }
+        $unique = array_filter(
+            array_count_values($this->dices),
+            static fn($countValues) => $countValues >= 3
+        );
+
+        if (empty($unique)) {
+            return 0;
         }
 
-        return 0;
+        krsort($unique);
+
+        return 3 * (int)array_key_first($unique);
     }
 
     public function smallStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
