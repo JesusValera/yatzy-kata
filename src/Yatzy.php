@@ -109,42 +109,14 @@ final class Yatzy
         return 3 * (int)array_key_first($unique);
     }
 
-    public function smallStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function smallStraight(): int
     {
-        $tallies = array_fill(0, 6, 0);
-        $tallies[$dice1 - 1] += 1;
-        $tallies[$dice2 - 1] += 1;
-        $tallies[$dice3 - 1] += 1;
-        $tallies[$dice4 - 1] += 1;
-        $tallies[$dice5 - 1] += 1;
-        if ($tallies[0] == 1 &&
-            $tallies[1] == 1 &&
-            $tallies[2] == 1 &&
-            $tallies[3] == 1 &&
-            $tallies[4] == 1) {
-            return 15;
-        }
-
-        return 0;
+        return $this->calculateStraight(15);
     }
 
-    public function largeStraight(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function largeStraight(): int
     {
-        $tallies = array_fill(0, 6, 0);
-        $tallies[$dice1 - 1] += 1;
-        $tallies[$dice2 - 1] += 1;
-        $tallies[$dice3 - 1] += 1;
-        $tallies[$dice4 - 1] += 1;
-        $tallies[$dice5 - 1] += 1;
-        if ($tallies[1] == 1 &&
-            $tallies[2] == 1 &&
-            $tallies[3] == 1 &&
-            $tallies[4] == 1 &&
-            $tallies[5] == 1) {
-            return 20;
-        }
-
-        return 0;
+        return $this->calculateStraight(20);
     }
 
     public function fullHouse(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
@@ -188,8 +160,21 @@ final class Yatzy
     {
         return array_reduce(
             array_filter($this->dices, static fn(int $dice) => $value === $dice),
-            static fn(int $carry, int $number) => $carry + $number,
+            static fn(int $carry, int $dice) => $carry + $dice,
             0
         );
+    }
+
+    private function calculateStraight(int $maxPoints): int
+    {
+        $unique = array_unique($this->dices);
+
+        if (count($unique) !== 5) {
+            return 0;
+        }
+
+        $reduce = array_reduce($unique, static fn(int $carry, int $dice) => $carry + $dice, 0);
+
+        return ($reduce === $maxPoints) ? $maxPoints : 0;
     }
 }
