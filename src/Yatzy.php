@@ -11,6 +11,7 @@ final class Yatzy
 
     public function __construct(int ...$dices)
     {
+        assert(count($dices) === 5);
         $this->dices = [...$dices];
     }
 
@@ -119,41 +120,23 @@ final class Yatzy
         return $this->calculateStraight(20);
     }
 
-    public function fullHouse(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function fullHouse(): int
     {
-        $tallies = [];
-        $_2 = false;
-        $i = 0;
-        $_2_at = 0;
-        $_3 = false;
-        $_3_at = 0;
+        $uniquePair = array_filter(
+            array_count_values($this->dices),
+            static fn($countValues) => $countValues === 2
+        );
 
-        $tallies = array_fill(0, 6, 0);
-        $tallies[$dice1 - 1] += 1;
-        $tallies[$dice2 - 1] += 1;
-        $tallies[$dice3 - 1] += 1;
-        $tallies[$dice4 - 1] += 1;
-        $tallies[$dice5 - 1] += 1;
+        $uniqueThrice = array_filter(
+            array_count_values($this->dices),
+            static fn($countValues) => $countValues === 3
+        );
 
-        foreach (range(0, 5) as $i) {
-            if ($tallies[$i] == 2) {
-                $_2 = true;
-                $_2_at = $i + 1;
-            }
+        if (count($uniquePair) !== 1 || count($uniqueThrice) !== 1) {
+            return 0;
         }
 
-        foreach (range(0, 5) as $i) {
-            if ($tallies[$i] == 3) {
-                $_3 = true;
-                $_3_at = $i + 1;
-            }
-        }
-
-        if ($_2 && $_3) {
-            return $_2_at * 2 + $_3_at * 3;
-        }
-
-        return 0;
+        return array_key_first($uniquePair) * 2 + array_key_first($uniqueThrice) * 3;
     }
 
     private function calculateSumOfDuplicatedNumber(int $value): int
