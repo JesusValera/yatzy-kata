@@ -6,33 +6,37 @@ namespace Yatzy;
 
 final class Yatzy
 {
-    /** @var list<int> */
+    /** @var list<Dice> */
     private array $dices;
 
-    public function __construct(int ...$dices)
+    public function __construct(Dice ...$dices)
     {
         assert(count($dices) === 5);
-        $this->dices = [...$dices];
+        $this->dices = $dices;
     }
 
     public function chance(): int
     {
-        return array_sum($this->dices);
+        return array_reduce(
+            $this->dices,
+            static fn(int $carry, Dice $dice): int => $carry + $dice->value(),
+            0
+        );
     }
 
     public function yatzyScore(): int
     {
-        $unique = array_unique($this->dices, SORT_NUMERIC);
-        if (1 === count($unique)) {
-            return 50;
-        }
-
-        return 0;
+        return 1 === count(array_unique($this->mapDicesToIntegers())) ? 50 : 0;
     }
 
     public function ones(): int
     {
-        return count(array_filter($this->dices, static fn(int $dice) => 1 === $dice));
+        return count(
+            array_filter(
+                $this->dices,
+                static fn(Dice $dice): bool => 1 === $dice->value()
+            )
+        );
     }
 
     public function twos(): int
@@ -63,8 +67,8 @@ final class Yatzy
     public function scorePair(): int
     {
         $unique = array_filter(
-            array_count_values($this->dices),
-            static fn($countValues) => $countValues >= 2
+            array_count_values($this->mapDicesToIntegers()),
+            static fn($countValues): bool => $countValues >= 2
         );
 
         if (empty($unique)) {
@@ -79,8 +83,8 @@ final class Yatzy
     public function twoPair(): int
     {
         $unique = array_filter(
-            array_count_values($this->dices),
-            static fn($countValues) => $countValues >= 2
+            array_count_values($this->mapDicesToIntegers()),
+            static fn($countValues): bool => $countValues >= 2
         );
 
         if (count($unique) < 2) {
@@ -97,8 +101,8 @@ final class Yatzy
     public function threeOfAKind(): int
     {
         $unique = array_filter(
-            array_count_values($this->dices),
-            static fn($countValues) => $countValues >= 3
+            array_count_values($this->mapDicesToIntegers()),
+            static fn($countValues): bool => $countValues >= 3
         );
 
         if (empty($unique)) {
@@ -112,7 +116,7 @@ final class Yatzy
 
     public function smallStraight(): int
     {
-        $unique = array_unique($this->dices);
+        $unique = array_unique($this->mapDicesToIntegers());
 
         if (count($unique) !== 5) {
             return 0;
@@ -125,7 +129,7 @@ final class Yatzy
 
     public function largeStraight(): int
     {
-        $unique = array_unique($this->dices);
+        $unique = array_unique($this->mapDicesToIntegers());
 
         if (count($unique) !== 5) {
             return 0;
@@ -139,27 +143,31 @@ final class Yatzy
     public function fullHouse(): int
     {
         $uniquePair = array_filter(
-            array_count_values($this->dices),
-            static fn($countValues) => $countValues === 2
+            array_count_values($this->mapDicesToIntegers()),
+            static fn(int $countValues): bool => $countValues === 2
         );
+        $thrice = $this->threeOfAKind();
 
-        $uniqueThrice = array_filter(
-            array_count_values($this->dices),
-            static fn($countValues) => $countValues === 3
-        );
-
-        if (count($uniquePair) !== 1 || count($uniqueThrice) !== 1) {
+        if (0 === $thrice || 1 !== count($uniquePair)) {
             return 0;
         }
 
-        return array_key_first($uniquePair) * 2 + array_key_first($uniqueThrice) * 3;
+        return array_key_first($uniquePair) * 2 + $thrice;
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function mapDicesToIntegers(): array
+    {
+        return array_map(static fn(Dice $dice): int => $dice->value(), $this->dices);
     }
 
     private function calculateSumOfDuplicatedNumber(int $value): int
     {
         return array_reduce(
-            array_filter($this->dices, static fn(int $dice) => $value === $dice),
-            static fn(int $carry, int $dice) => $carry + $dice,
+            array_filter($this->dices, static fn(Dice $dice): bool => $value === $dice->value()),
+            static fn(int $carry, Dice $dice): int => $carry + $dice->value(),
             0
         );
     }
