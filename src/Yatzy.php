@@ -112,12 +112,28 @@ final class Yatzy
 
     public function smallStraight(): int
     {
-        return $this->calculateStraight(15);
+        $unique = array_unique($this->dices);
+
+        if (count($unique) !== 5) {
+            return 0;
+        }
+
+        $reduce = array_reduce($unique, static fn(int $carry, int $dice) => $carry + $dice, 0);
+
+        return ($reduce === 15) ? 15 : 0;
     }
 
     public function largeStraight(): int
     {
-        return $this->calculateStraight(20);
+        $unique = array_unique($this->dices);
+
+        if (count($unique) !== 5) {
+            return 0;
+        }
+
+        $reduce = array_reduce($unique, static fn(int $carry, int $dice) => $carry + $dice, 0);
+
+        return ($reduce === 20) ? 20 : 0;
     }
 
     public function fullHouse(): int
@@ -146,18 +162,5 @@ final class Yatzy
             static fn(int $carry, int $dice) => $carry + $dice,
             0
         );
-    }
-
-    private function calculateStraight(int $maxPoints): int
-    {
-        $unique = array_unique($this->dices);
-
-        if (count($unique) !== 5) {
-            return 0;
-        }
-
-        $reduce = array_reduce($unique, static fn(int $carry, int $dice) => $carry + $dice, 0);
-
-        return ($reduce === $maxPoints) ? $maxPoints : 0;
     }
 }
