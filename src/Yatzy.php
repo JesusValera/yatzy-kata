@@ -63,7 +63,7 @@ final class Yatzy
     {
         $unique = array_filter(
             array_count_values($this->dices),
-            static fn($countValues) => $countValues === 2
+            static fn($countValues) => $countValues >= 2
         );
 
         if (empty($unique)) {
@@ -75,28 +75,22 @@ final class Yatzy
         return 2 * (int)array_key_first($unique);
     }
 
-    public function two_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function twoPair(): int
     {
-        $counts = array_fill(0, 6, 0);
-        $counts[$dice1 - 1] += 1;
-        $counts[$dice2 - 1] += 1;
-        $counts[$dice3 - 1] += 1;
-        $counts[$dice4 - 1] += 1;
-        $counts[$dice5 - 1] += 1;
-        $n = 0;
-        $score = 0;
-        for ($i = 0; $i != 6; $i++) {
-            if ($counts[6 - $i - 1] >= 2) {
-                $n = $n + 1;
-                $score += (6 - $i);
-            }
+        $unique = array_filter(
+            array_count_values($this->dices),
+            static fn($countValues) => $countValues >= 2
+        );
+
+        if (count($unique) < 2) {
+            return 0;
         }
 
-        if ($n == 2) {
-            return $score * 2;
-        }
+        krsort($unique);
 
-        return 0;
+        $keys = array_keys($unique);
+
+        return $keys[0] * 2 + $keys[1] * 2;
     }
 
     public function three_of_a_kind(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int

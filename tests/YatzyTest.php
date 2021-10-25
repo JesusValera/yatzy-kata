@@ -70,11 +70,11 @@ final class YatzyTest extends TestCase
         self::assertSame(12, (new Yatzy(5, 3, 6, 6, 5))->scorePair());
     }
 
-    public function test_two_Pair(): void
+    public function test_two_pair(): void
     {
-        self::assertSame(16, (new Yatzy())->two_pair(3, 3, 5, 4, 5));
-        self::assertSame(18, (new Yatzy())->two_pair(3, 3, 6, 6, 6));
-        self::assertSame(0, (new Yatzy())->two_pair(3, 3, 6, 5, 4));
+        self::assertSame(16, (new Yatzy(3, 3, 5, 4, 5))->twoPair());
+        self::assertSame(18, (new Yatzy(3, 3, 6, 6, 6))->twoPair());
+        self::assertSame(0, (new Yatzy(3, 3, 6, 5, 4))->twoPair());
     }
 
     public function test_three_of_a_kind(): void
