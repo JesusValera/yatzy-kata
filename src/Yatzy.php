@@ -46,37 +46,33 @@ final class Yatzy
 
     public function fours(): int
     {
-
         return $this->calculateSumOfDuplicatedNumber(4);
     }
 
     public function fives(): int
     {
-
         return $this->calculateSumOfDuplicatedNumber(5);
     }
 
     public function sixes(): int
     {
-
         return $this->calculateSumOfDuplicatedNumber(6);
     }
 
-    public function score_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
+    public function scorePair(): int
     {
-        $counts = array_fill(0, 6, 0);
-        $counts[$dice1 - 1] += 1;
-        $counts[$dice2 - 1] += 1;
-        $counts[$dice3 - 1] += 1;
-        $counts[$dice4 - 1] += 1;
-        $counts[$dice5 - 1] += 1;
-        for ($at = 0; $at != 6; $at++) {
-            if ($counts[6 - $at - 1] == 2) {
-                return (6 - $at) * 2;
-            }
+        $unique = array_filter(
+            array_count_values($this->dices),
+            static fn($countValues) => $countValues === 2
+        );
+
+        if (empty($unique)) {
+            return 0;
         }
 
-        return 0;
+        krsort($unique);
+
+        return 2 * (int)array_key_first($unique);
     }
 
     public function two_pair(int $dice1, int $dice2, int $dice3, int $dice4, int $dice5): int
